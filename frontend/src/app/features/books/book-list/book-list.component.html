@@ -1,0 +1,329 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Gestión de Libros</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Administra la colección de libros de la biblioteca CMPC
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <button
+        class="flex items-center cmpc-button cmpc-button-primary"
+        (click)="createBook()"
+      >
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          />
+        </svg>
+        Nuevo Libro
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-6 cmpc-card">
+    <form
+      [formGroup]="filtersForm"
+      class="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-x-4 px-4"
+    >
+      <div class="">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Título *
+        </label>
+        <mat-form-field appearance="outline" class="w-full">
+          <input
+            matInput
+            placeholder="Ingrese Título"
+            formControlName="title"
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="w-full">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Genero/s *
+        </label>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-select formControlName="genre">
+            <mat-option value="">Todos los géneros</mat-option>
+            @for ( genre of listGenres; track $index) {
+            <mat-option [value]="genre">
+              {{ genre.name }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="w-full">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Editorial/es *
+        </label>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-select formControlName="publisher">
+            <mat-option value="">Todas las Editoriales</mat-option>
+            @for (publisher of listPublisher; track $index) {
+
+            <mat-option [value]="publisher">
+              {{ publisher.name }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="w-full flex gap-4 items-end">
+        <div class="w-full">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Ordenar por
+          </label>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-select
+              formControlName="sortField"
+              (selectionChange)="onSortChange()"
+            >
+              <mat-option value="">Título (A → Z)</mat-option>
+              <mat-option value="title_DESC">Título (Z → A)</mat-option>
+              <mat-option value="author_ASC">Autor (A → Z)</mat-option>
+              <mat-option value="author_DESC">Autor (Z → A)</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  @if (isLoading) {
+  <div class="flex justify-center py-8">
+    <div class="spinner"></div>
+  </div>
+  } @if (!isLoading) {
+  <div class="mt-6 cmpc-table">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Genero</th>
+          <th>Editorial</th>
+          <th>Imagen</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (book of books; track $index) {
+
+        <tr [class.opacity-60]="!book.available">
+          <td class="font-medium">
+            {{ book.title }}
+          </td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              <span class="bg-gray-100 px-2 py-1 rounded text-sm">
+                {{ book.author.name }}
+              </span>
+              @if (!book.author) {
+              <span>-</span>
+              }
+            </div>
+          </td>
+          <td>
+            @if (book.genres!.length > 0) {
+            <ng-container>
+              @for (genre of book.genres; track $index) {
+
+              <div>{{ genre.name }}</div>
+              }
+            </ng-container>
+            } @if (!book.genres || book.genres.length === 0) {
+            <span>-</span>
+
+            }
+          </td>
+          <td>
+            @if (book.publisher) {
+            <div>{{ book.publisher.name }}</div>
+            } @if (!book.publisher) {
+            <span>-</span>
+            }
+          </td>
+          <td>
+            @if (book.imagePath) {
+            <div class="w-12 h-16 bg-gray-200 rounded overflow-hidden">
+              <img
+                [src]="'http://localhost:3000/api/files/book/' + book.imagePath"
+                [alt]="book.title"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            } @if (!book.imagePath) {
+            <div
+              class="w-12 h-16 bg-gray-200 rounded flex items-center justify-center"
+            >
+              <svg
+                class="w-6 h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+            </div>
+            }
+          </td>
+          <td>
+            <span
+              [class]="
+                book.available
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              "
+              class="px-2 py-1 text-xs font-medium rounded-full"
+            >
+              {{ book.available ? "Disponible" : "No disponible" }}
+            </span>
+          </td>
+          <td>
+            <div class="flex space-x-2">
+              <button
+                (click)="editBook(book.id)"
+                class="text-cmpc-green hover:text-cmpc-soft-brown"
+                title="Editar"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+              <button
+                (click)="deleteBook(book)"
+                class="text-red-600 hover:text-red-900"
+                title="Eliminar"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (books.length === 0) {
+    <div
+      class="flex flex-col items-center justify-center py-16 px-4 text-center"
+    >
+      <div class="relative mb-6">
+        <mat-icon class="text-cmpc-green !w-20 !h-20 !text-[80px] relative"
+          >auto_stories</mat-icon
+        >
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">
+        ¡Oh, estantería vacía!
+      </h2>
+
+      <p class="text-gray-600 max-w-md mx-auto mb-6">
+        Parece que aún no hay libros en tu colección. <br />
+        Agrega tu primer libro para comenzar a llenar este espacio.
+      </p>
+
+      <button
+        class="flex items-center cmpc-button cmpc-button-primary"
+        (click)="createBook()"
+      >
+        <mat-icon class="!mr-2">add_circle</mat-icon>
+        Crear primer libro
+      </button>
+    </div>
+
+    }
+  </div>
+  }
+
+  <div class="mt-6 flex justify-between items-center">
+    <div class="text-sm text-gray-700">
+      Mostrando {{ (currentPage - 1) * pageSize + 1 }} a
+      {{ Math.min(currentPage * pageSize, total) }} de {{ total }} resultados
+    </div>
+    <div class="flex space-x-2">
+      <button
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+        class="cmpc-button cmpc-button-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Anterior
+      </button>
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+        class="cmpc-button cmpc-button-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Siguiente
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (showDeleteModal) {
+<div
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50"
+>
+  <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-mx-auto">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">
+      Confirmar eliminación
+    </h3>
+    <p class="text-sm text-gray-500 mb-6">
+      ¿Estás seguro de que deseas eliminar el libro "{{ bookToDelete?.title }}"?
+      Esta acción se puede revertir.
+    </p>
+    <div class="flex justify-end space-x-3">
+      <button
+        (click)="cancelDelete()"
+        class="cmpc-button cmpc-button-secondary"
+      >
+        Cancelar
+      </button>
+      <button (click)="confirmDelete()" class="cmpc-button cmpc-button-danger">
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+}

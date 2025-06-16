@@ -1,0 +1,147 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "ngx-toastr/toastr";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* CMPC Custom Styles */
+:root {
+  --cmpc-green: #2e7d32;
+  --cmpc-dark-green: #1b5e20;
+  --cmpc-light-green: #4caf50;
+  --cmpc-gray: #f5f5f5;
+  --cmpc-dark-gray: #9e9e9e;
+  --cmpc-white: #ffffff;
+}
+
+/* Base styles */
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background-color: var(--cmpc-gray);
+  color: #333;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cmpc-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cmpc-dark-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cmpc-green);
+}
+
+/* Toast customization */
+.toast-success {
+  background-color: var(--cmpc-light-green) !important;
+}
+
+.toast-error {
+  background-color: #f44336 !important;
+}
+
+.toast-info {
+  background-color: var(--cmpc-green) !important;
+}
+
+/* Custom components */
+.cmpc-button {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.cmpc-button-primary {
+  @apply bg-cmpc-green text-white hover:bg-cmpc-dark-green focus:ring-cmpc-green;
+}
+
+.cmpc-button-secondary {
+  @apply bg-white text-cmpc-green border border-cmpc-green hover:bg-cmpc-gray focus:ring-cmpc-green;
+}
+
+.cmpc-button-danger {
+  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-600;
+}
+
+.cmpc-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cmpc-green focus:border-transparent;
+}
+
+.cmpc-card {
+  @apply bg-white rounded-lg shadow-lg p-6;
+}
+
+.cmpc-table {
+  @apply w-full bg-white rounded-lg shadow overflow-hidden;
+}
+
+.cmpc-table th {
+  @apply bg-cmpc-green text-white px-6 py-3 text-left text-sm font-medium uppercase tracking-wider;
+}
+
+.cmpc-table td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+.cmpc-table tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.cmpc-table tr:hover {
+  @apply bg-gray-100;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 3px solid var(--cmpc-gray);
+  border-top: 3px solid var(--cmpc-green);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .cmpc-card {
+    @apply p-4;
+  }
+
+  .cmpc-table th,
+  .cmpc-table td {
+    @apply px-3 py-2;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled)
+  .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled)
+  .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled)
+  .mdc-notched-outline__trailing {
+  border-color: var(--cmpc-green) !important;
+}
