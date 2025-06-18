@@ -24,11 +24,11 @@ export class BookService {
 
     if (filters.title) params = params.set('title', filters.title);
     if (filters.authorId)
-      params = params.set('../authorId', filters.authorId.toString());
+      params = params.set('authorId', filters.authorId.toString());
     if (filters.genreId)
-      params = params.set('../genreId', filters.genreId.toString());
+      params = params.set('genreId', filters.genreId.toString());
     if (filters.publisherId)
-      params = params.set('../publisherId', filters.publisherId.toString());
+      params = params.set('publisherId', filters.publisherId.toString());
     if (filters.available !== undefined)
       params = params.set('available', filters.available.toString());
     if (filters.orderBy) params = params.set('orderBy', filters.orderBy);
@@ -54,11 +54,11 @@ export class BookService {
   getBook(id: string): Observable<BookResponse | null> {
     return this.http.get<BookResponse>(`${this.authUrl}/${id}`).pipe(
       catchError((error) => {
-        console.error('../book error:', error);
+        console.error('book error:', error);
         const errorMsg =
           error.status === 401
             ? 'Invalid credentials'
-            : '../book failed. Please try again later.';
+            : 'book failed. Please try again later.';
         return throwError(() => new Error(errorMsg));
       })
     );

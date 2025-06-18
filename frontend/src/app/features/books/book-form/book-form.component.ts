@@ -203,21 +203,26 @@ export class BookFormComponent implements OnInit {
       genres: this.bookForm.value.genre,
       publisher: this.bookForm.value.publisher,
       price: +this.bookForm.value.price,
+      imagePath: 'LogoCMPC.png',
     };
 
     try {
-      let imagePath: string | undefined;
+      let imagePath: string = 'LogoCMPC.png';
 
       if (this.selectedFile) {
-        const uploadResponse = await firstValueFrom(
-          this.bookService.uploadImage(this.selectedFile)
-        );
-        imagePath = uploadResponse.data;
+        try {
+          const uploadResponse = await firstValueFrom(
+            this.bookService.uploadImage(this.selectedFile)
+          );
+          imagePath = uploadResponse.data;
+        } catch (uploadError) {
+          console.error('❌ Error al subir imagen:', uploadError);
+        }
       }
 
-      let payload: any = {
+      const payload: any = {
         ...baseData,
-        ...(imagePath ? { imagePath } : {}),
+        imagePath,
         deletedAt: null,
       };
 
@@ -237,7 +242,7 @@ export class BookFormComponent implements OnInit {
     } catch (error) {
       const action = this.isEditMode ? 'actualizar' : 'crear';
       this.toastr.error(`Error al ${action} el libro`, 'Error');
-      console.error(error);
+      console.error('❌ Error general:', error);
     } finally {
       this.isLoading = false;
     }

@@ -28,7 +28,6 @@ export class FilesController {
   }
 
   @Post('book')
-  @UseGuards(AuthGuard())
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter,
