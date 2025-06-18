@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22
 
 WORKDIR /app
 
@@ -9,4 +9,7 @@ COPY . .
 
 RUN npm run build
 
-CMD ["node", "dist/main"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["./entrypoint.sh"]
